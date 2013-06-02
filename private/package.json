@@ -5,6 +5,8 @@
         "markdown": "~0.4",
         "express": "~3.2",
         "socket.io": "~0.9",
-        "mustache": "~0.7"
+        "mustache": "~0.7",
+        "ejs": "~0.8",
+        "MD5": "~1.0"
     }
 }
