@@ -1,0 +1,12 @@
+{
+    "name": "MyTchat",
+    "version": "0.1.0",
+    "dependencies": {
+        "markdown": "~0.4",
+        "express": "~3.2",
+        "socket.io": "~0.9",
+        "mustache": "~0.7",
+        "ejs": "~0.8",
+        "MD5": "~1.0",
+    }
+}
