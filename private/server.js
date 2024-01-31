@@ -1,29 +1,21 @@
 var express = require('express');
 var app = express();
-var server = require('http').createServer(app)
-
-
-
+var server = require('http').createServer(app);
+const fileSystem = require('fs');
+const path = require('path');
 var io = require('socket.io').listen(server);
-
-server.listen(3333);
-
 var md5 = require('MD5');
 
-var flux = "";
+server.listen(3333);
 
 app.get('/mp3/', function(req, res) {
 	res.setHeader("Cache-Control", "public, max-age=345600"); // 4 days
     res.setHeader("Expires", new Date(Date.now() + 345600000).toUTCString());
 });
 
-
 // static server
 
 app.use(express.static(__dirname + '/../public'));
-
-
-// Rooouteeesss
 
 app.get('/login', function(req, res) {
 	res.render('login.ejs', {etage: req.params.etagenum});
@@ -45,8 +37,6 @@ var users = {};
 var messages = [];
 var history = 4;
 
-
-// Sockets et temps réel
 io.sockets.on('connection', function(socket) {
 
 	var me = false;
@@ -56,8 +46,6 @@ io.sockets.on('connection', function(socket) {
 		socket.emit('newuser', users[i]);
 	}
 
-	
-	
 	socket.on('login', function(user) {
 		me = user;
 		me.id = md5(user.pseudo);
@@ -68,26 +56,17 @@ io.sockets.on('connection', function(socket) {
 		} else {
 			socket.emit('logged', user );
 		}
-		
 		users[me.id] = me;
-		
-		io.sockets.emit('newuser', me);
-		
-			
-	
-		
-	
+		io.sockets.emit('newuser', me);	
 	});
 
-	
 	socket.on('disconnect', function () {
     	io.sockets.emit('userremove', me);
     	socket.emit('userremove', me);
     	socket.emit('logout', me);
     	delete users[me.id];
   	});
-	
-	
+		
 	socket.on('logout', function(){
 		if(!me) {
 			return false;
@@ -98,26 +77,21 @@ io.sockets.on('connection', function(socket) {
 		delete users[me.id];
 	});
 
-
 	socket.on('setmail', function(data){
 		if(!me) {
 			return false;
 		}
-		
+
 		var hash = md5(data.mail);
 		me.hash = hash;
 		me.mail = data.mail;
 		me.avatar = 'https://gravatar.com/avatar/'+ me.hash + '?s=50';
-		socket.emit('setmailok');
-		
+		socket.emit('setmailok');		
 	});
-
-
 
 	socket.on('newmessage', function(msg) {
 		console.log('msg:' + msg.message);
 		msg.user = me;
-		//message[] = msg;
 		date = new Date();
 		msg.h = date.getHours();
 		msg.m = date.getMinutes();
@@ -126,13 +100,9 @@ io.sockets.on('connection', function(socket) {
 		if (messages.length > history) {
 			messages.shift();
 		}
-		
-		
+				
 		io.sockets.emit('newmessageconfirmation', msg);
-		//io.sockets.emit('newuser', me);
 	});
-
-
 
 	socket.on('getpreviousmessages', function() {
 		for (var i in messages) {
@@ -141,28 +111,10 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
-
-
-	socket.on('typing', function() {
-		
+	socket.on('typing', function() {		
 		io.sockets.emit('typing', me);
-			
 	});
-
-
-
-
 });
-
-
-
-
-
-
-    fileSystem = require('fs'),
-    path = require('path');
-
-
 
 
 
@@ -185,9 +137,3 @@ var server2 = require('http').createServer(function(request, response) {
     });
 })
 .listen(2000);
-
-
-
-
-
-
