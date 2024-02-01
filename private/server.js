@@ -9,7 +9,7 @@ var md5 = require('MD5');
 server.listen(3333);
 
 app.get('/mp3/', function(req, res) {
-	res.setHeader("Cache-Control", "public, max-age=345600"); // 4 days
+	res.setHeader("Cache-Control", "public, max-age=345600");
     res.setHeader("Expires", new Date(Date.now() + 345600000).toUTCString());
 });
 
